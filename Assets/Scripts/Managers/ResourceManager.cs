@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ResourceManager : MonoBehaviour
+public class ResourceManager : MonoBehaviour, ITickable
 {
+    public static List<GameObject> tickables = new List<GameObject>();
     string[] resoureNames =
         {
             "Gold",
@@ -29,7 +30,8 @@ public class ResourceManager : MonoBehaviour
     float resourceTick = 5.0f;
     float tickTime = 5.0f;
     public static int[] addedMultipliers = new int[4];
-    public static int[] addedResources = new int[4]; 
+    public static int[] addedResources = new int[4];
+    public UIManager uiManager;
     // Start is called before the first frame update
     private static ResourceManager _resourceInstance;
     public static ResourceManager ResourceInstance
@@ -45,27 +47,30 @@ public class ResourceManager : MonoBehaviour
     }
     void Awake()
     {
+        tickables.Add(this.gameObject);
         _resourceInstance = this;
         for (int i = 0; i < numberOfResources; i++)
         {
             maxCapacity[i] = baseCapacity[i];
             current[i] = starting[i];
         }
+        StartCoroutine(StartResourceTickRoutine());
+        UpdateResourceUI();
     }
 
-    // Update is called once per frame
-    void Update()
+    IEnumerator StartResourceTickRoutine()
     {
-        if (Time.time > resourceTick)
+        yield return new WaitForSeconds(tickTime);
+        foreach(GameObject obj in tickables)
         {
-            Tick();
-            resourceTick = Time.time + tickTime;
+            obj.GetComponent<ITickable>().Tick();
         }
+        StartCoroutine(StartResourceTickRoutine());
     }
-    void Tick()
+    void ITickable.Tick()
     {
         int[] tempChange = new int[4];
-        for (int i = 0; i < numberOfResources; i++) 
+        for (int i = 0; i < numberOfResources; i++)
         {
             tempChange[i] = baseTick[i]; //add baseTickFirst
             tempChange[i] += addedResources[i]; //add addedResources
@@ -76,6 +81,13 @@ public class ResourceManager : MonoBehaviour
             UpdateResource(i, tempChange[i]);
         }
     }
+    public void UpdateResourceUI()
+    {
+        for (int i = 0; i < numberOfResources; i++)
+        {
+            UpdateResource(i, 0);
+        }
+    }
     public void UpdateResource(int resource, int amount)
     {
         //Debug.Log(amount + " :amount");
@@ -84,17 +96,14 @@ public class ResourceManager : MonoBehaviour
         if (current[resource] > maxCapacity[resource])
         {
             current[resource] = maxCapacity[resource];
-            UIManager.Instance.UpdateAndRemoveErrorText("You have a max capacity of " + resoureNames[resource]);
+            uiManager.UpdateAndRemoveErrorText("You have a max capacity of " + resoureNames[resource]);
         }
         else if (current[resource] < 0)
         {
             current[resource] = 0;
-            UIManager.Instance.UpdateAndRemoveErrorText("You have ran our of " + resoureNames[resource]);
+            uiManager.UpdateAndRemoveErrorText("You have ran our of " + resoureNames[resource]);
         }
-        UIManager.Instance.UpdateResourceText(new Vector2(resource, current[resource]));
+        uiManager.UpdateResourceText(new Vector2(resource, current[resource]));
     }
-    private void LateUpdate()
-    {
-        
-    }
+    
 }

@@ -107,6 +107,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e58ffe670910cb6459f8d6708b85cefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  name: House
+  buildingLevel: 0
   sizeX: 4
   sizeY: 4
   transparentMaterial: {fileID: 2100000, guid: 61021e82f58c74044a386c50872253bb, type: 2}
@@ -115,6 +117,14 @@ MonoBehaviour:
   requiredResources: 00000000320000007800000019000000
   resourceAdds: 01000000fbffffff0000000000000000
   resourceMults: 01000000feffffff0000000000000000
+  levelUpgradeResourceMultiplier:
+  - 1
+  - 1.25
+  - 1.5
+  buildPoints: 0
+  built: 0
+  mouseOverBuilding: 0
+  terrainManager: {fileID: 0}
 --- !u!208 &4089518987940147411
 NavMeshObstacle:
   m_ObjectHideFlags: 0

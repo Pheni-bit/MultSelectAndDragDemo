@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class UIManager : MonoBehaviour, ITickable
 {
     private static int lastSelectedCount;
     public Image[] bottomPanelImageArr;
     public Text[] bottomPanelTextArr;
     public GameObject[] bottomSelected;
     public GameObject formationPanel;
+    public GameObject selectedBuildingPanel;
+    GameObject selectedBuildingObj;
     private static UIManager _instance;
     public Text[] resourceTexts;
     [SerializeField]
@@ -35,6 +37,7 @@ public class UIManager : MonoBehaviour
         Debug.Log("scale factor = " + gameObject.GetComponent<Canvas>().scaleFactor);
         _instance = this;
         terrainManager = GameObject.Find("Terrain").GetComponent<TerrainManager>();
+        ResourceManager.tickables.Add(this.gameObject);
     }
 
     void Update()
@@ -42,6 +45,7 @@ public class UIManager : MonoBehaviour
         SetSelected();
         OnSelectedChange();
         OnSelectedCountChange();
+        IfBuildingPanelOpen();
     }
     void SetSelected()
     {
@@ -72,6 +76,25 @@ public class UIManager : MonoBehaviour
             CompareBot();
         }
         lastSelectedCount = BotClickerData.currentlySelected.Count;
+    }
+    void IfBuildingPanelOpen() // shows the running building points and progression bar for building the building
+    {
+        if (selectedBuildingPanel.gameObject.activeSelf == true)
+        {
+            Building buildingScript = selectedBuildingObj.GetComponent<Building>();
+            if (selectedBuildingPanel.transform.GetChild(3).gameObject.activeSelf == true) // if building is not built
+            {
+                int points = buildingScript.buildPoints;
+                int requirePoints = buildingScript.requiredBuildingPoints;
+                GameObject buildingNotBuildPanel = selectedBuildingPanel.transform.GetChild(3).gameObject;
+                RectTransform buildingPointsProgressionBar = buildingNotBuildPanel.transform.GetChild(2).transform.GetChild(0).gameObject.GetComponent<RectTransform>();
+                buildingPointsProgressionBar.anchorMax = new Vector2((float)points / requirePoints, 1);
+            }
+        }
+    }
+    public void UpgradeBuildingButton()
+    {
+        selectedBuildingObj.GetComponent<Building>().BuildingLevelUp();
     }
     public void GetSelectedCohort()
     {
@@ -188,5 +211,52 @@ public class UIManager : MonoBehaviour
     public void UpdateResourceText(Vector2 resource) // resource.x = type of resource and text index; resource.y = int/text
     {
         resourceTexts[(int)resource.x].text = ((int)resource.y).ToString();
+    }
+    public void BuildingUI(GameObject building)
+    {
+        selectedBuildingObj = building;
+        selectedBuildingPanel.SetActive(true);
+        Building buildingScript = building.GetComponent<Building>();
+        selectedBuildingPanel.transform.GetChild(0).GetComponent<Text>().text = buildingScript.name.ToString();
+        selectedBuildingPanel.transform.GetChild(1).GetComponent<Text>().text = buildingScript.buildingLevel.ToString();
+        GameObject buildingBuiltPanel = selectedBuildingPanel.transform.GetChild(2).gameObject;
+        GameObject buildingNotBuildPanel = selectedBuildingPanel.transform.GetChild(3).gameObject;
+        if (buildingScript.built == true)
+        {
+            buildingBuiltPanel.SetActive(true);
+            buildingNotBuildPanel.SetActive(false);
+            buildingBuiltPanel.transform.GetChild(0).GetComponent<Button>().interactable = buildingScript.HasTheRequiredResources();
+        }
+        else
+        {
+            buildingNotBuildPanel.SetActive(true);
+            buildingBuiltPanel.SetActive(false);
+            int points = buildingScript.buildPoints;
+            int requirePoints = buildingScript.requiredBuildingPoints;
+            buildingNotBuildPanel.transform.GetChild(0).GetComponent<Text>().text = points.ToString();
+            buildingNotBuildPanel.transform.GetChild(1).GetComponent<Text>().text = requirePoints.ToString();
+            RectTransform buildingPointsProgressionBar = buildingNotBuildPanel.transform.GetChild(2).transform.GetChild(0).gameObject.GetComponent<RectTransform>();
+            buildingPointsProgressionBar.anchorMax = new Vector2((float)points / requirePoints, 1);
+        }
+    }
+    public void BuildingUIOff()
+    {
+        selectedBuildingPanel.SetActive(false);
+    }
+    public void Tick()
+    {
+        if (selectedBuildingPanel.gameObject.activeSelf == true)
+        {
+            Building buildingScript = selectedBuildingObj.GetComponent<Building>();
+            if (selectedBuildingPanel.transform.GetChild(3).gameObject.activeSelf == true) // if building is not built
+            {
+
+            }
+            else
+            {
+                GameObject buildingBuiltPanel = selectedBuildingPanel.transform.GetChild(2).gameObject;
+                buildingBuiltPanel.transform.GetChild(0).GetComponent<Button>().interactable = buildingScript.HasTheRequiredResources();
+            }
+        }
     }
 }

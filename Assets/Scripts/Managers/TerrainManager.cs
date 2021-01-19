@@ -13,6 +13,8 @@ public class TerrainManager : MonoBehaviour, IPointerClickHandler
     Cohort createdCohort;
     GameObject cohort;
     public bool building;
+    public GameObject buildingSelected;
+
     public List<GameObject> priorCohorts = new List<GameObject>();
     public TerrainGrid terrainGrid;
 
@@ -22,34 +24,39 @@ public class TerrainManager : MonoBehaviour, IPointerClickHandler
     }
     public void OnPointerClick(PointerEventData eventData)
     {
+        UIManager.Instance.BuildingUIOff();
         Debug.Log("Getting Called");
         if (Input.GetMouseButtonUp(0))
         {
             BotClickerData.DeselectAll(eventData);
-            //if (building)
-            //{
-                if (terrainGrid.gameObject.activeSelf == true)
+            if (building && terrainGrid.gameObject.activeSelf == false)
+            {
+                Debug.Log("left clicking building");
+                //buildingSelected
+                UIManager.Instance.BuildingUI(buildingSelected);
+            }
+            else if (terrainGrid.gameObject.activeSelf == true)
+            {
+                if (terrainGrid.AttemptToPlaceObject() == "true")
                 {
-                    if (terrainGrid.AttemptToPlaceObject() == "true")
-                    {
-                        terrainGrid.PlaceObject();
-                    }
-                    else
-                    {
-                        UIManager.Instance.UpdateAndRemoveErrorText(terrainGrid.AttemptToPlaceObject());
-                    }
-
+                    terrainGrid.PlaceObject();
                 }
-            //}
+                else
+                {
+                    UIManager.Instance.UpdateAndRemoveErrorText(terrainGrid.AttemptToPlaceObject());
+                }
+            }
+            
         }
         else if (Input.GetMouseButtonUp(1))
         {
+            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (building)
             {
-
+                Debug.Log("right clicking building");
+                // if currently selected contains worker bots to build
             }
-            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hitData, 1000, LayerMask.GetMask("Terrain")))
+            else if (Physics.Raycast(ray, out RaycastHit hitData, 1000, LayerMask.GetMask("Terrain")))
             {
                 if (UIManager.Selected)
                 {
@@ -149,9 +156,5 @@ public class TerrainManager : MonoBehaviour, IPointerClickHandler
             thisCohortSwitch.stance = priorCohortScript.stance;
         }
         return cohort;
-    }
-    public void IfBuilding(bool build)
-    {
-        building = build;
     }
 }

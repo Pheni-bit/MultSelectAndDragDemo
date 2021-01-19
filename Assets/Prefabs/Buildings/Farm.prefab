@@ -188,15 +188,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e58ffe670910cb6459f8d6708b85cefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  name: Farm
   sizeX: 6
   sizeY: 6
   transparentMaterial: {fileID: 2100000, guid: 61021e82f58c74044a386c50872253bb, type: 2}
   teamMaterial: {fileID: 2100000, guid: aa3f7bc196cfe8e4ca37c57389163915, type: 2}
   requiredBuildingPoints: 100
-  requiredWood: 0
-  requiredStone: 0
-  requiredGold: 0
-  requiredFood: 0
+  requiredResources: 
+  resourceAdds: 
+  resourceMults: 
+  mouseOverBuilding: 0
+  terrainManager: {fileID: 0}
 --- !u!208 &2386770244041275127
 NavMeshObstacle:
   m_ObjectHideFlags: 0

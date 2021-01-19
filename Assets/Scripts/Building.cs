@@ -6,50 +6,59 @@ using UnityEngine.AI;
 public class Building : MonoBehaviour
 {
     public string name;
-    int maxLevel;
-    int level = 1;
+    public int maxLevel;
+    public int buildingLevel;
     public int sizeX;
     public int sizeY;
     public Material transparentMaterial;
     public Material teamMaterial;
     public int requiredBuildingPoints;
-    public int[] requiredResources;
-    public int[] resourceAdds;
-    public int[] resourceMults;
+    public int[] requiredResources, resourceAdds, resourceMults, currentAdds, currentMults;
+    public float[] levelUpgradeResourceMultiplier;
     int subtractResourceTrigger = 1;
-    int buildPoints;
-    bool built;
+    public int buildPoints;
+    public bool built;
     public bool mouseOverBuilding;
     public TerrainManager terrainManager;
     private void Start()
     {
+        levelUpgradeResourceMultiplier = new float[maxLevel];
+        for (int i = 0; i < maxLevel; i++)
+        {
+            levelUpgradeResourceMultiplier[i] = 1 + (i / 4);
+        }
+        built = true;
         Debug.Log(maxLevel);
         terrainManager = GameObject.Find("Terrain").GetComponent<TerrainManager>();
     }
     private void OnMouseEnter()
     {
-        terrainManager.IfBuilding(true);
+        terrainManager.building = true;
+        terrainManager.buildingSelected = this.gameObject;
     }
     private void OnMouseExit()
     {
-        terrainManager.IfBuilding(false);
+        terrainManager.building = false;
+        terrainManager.buildingSelected = this.gameObject;
     }
     public void Init()
     {
+        buildingLevel = 1;
         gameObject.layer = 13;
         for(int i = 0; i < transform.childCount; i++)
         {
             transform.GetChild(i).gameObject.layer = 13;
         }
         BuildingManager.BuildingsNeedingBuilt.Add(gameObject);
-        TakeRequiredMaterials(requiredResources);
+        TakeRequiredMaterials();
         AddOrSubResourceDifferences();
+        ResourceManager.ResourceInstance.UpdateResourceUI();
     }
-    public void TakeRequiredMaterials(int[] resourceArr)
+    public void TakeRequiredMaterials()
     {
-        for (int i = 0; i < resourceArr.Length; i++)
+        for (int i = 0; i < requiredResources.Length; i++)
         {
-            ResourceManager.ResourceInstance.current[i] -= resourceArr[i];
+            ResourceManager.ResourceInstance.current[i] -= (int)(requiredResources[i] * levelUpgradeResourceMultiplier[buildingLevel]);
         }
     }
     public void AddBuildingPoints(int points)
@@ -59,7 +68,10 @@ public class Building : MonoBehaviour
         {
             built = true;
             BuildingHasBeenBuilt();
-            AddOrSubResourceDifferences();
+            for (int i  = 0; i < buildingLevel; i++) //incase the building is being built on buildingLevel 2 for start vs buildingLevel 1 / potential technology upgrade
+            {
+                AddOrSubResourceDifferences();
+            }
         }
     }
     public void BuildingHasBeenBuilt()
@@ -95,7 +107,7 @@ public class Building : MonoBehaviour
     {
         for (int i = 0; i < requiredResources.Length; i++)
         {
-            if (requiredResources[i] > ResourceManager.ResourceInstance.current[i])
+            if (requiredResources[i] * levelUpgradeResourceMultiplier[buildingLevel] > ResourceManager.ResourceInstance.current[i])
             {
                 return false;
             }
@@ -107,7 +119,18 @@ public class Building : MonoBehaviour
         if (built)
         {
             subtractResourceTrigger = -1;
-            AddOrSubResourceDifferences();
+            for (int i = 0; i < buildingLevel; i++) 
+            {
+                AddOrSubResourceDifferences();
+            }
         }
+    }
+    public void BuildingLevelUp()
+    {
+        buildingLevel++;
+        TakeRequiredMaterials();
+        AddOrSubResourceDifferences();
+        UIManager.Instance.BuildingUI(this.gameObject);
+        ResourceManager.ResourceInstance.UpdateResourceUI();
     }
 }

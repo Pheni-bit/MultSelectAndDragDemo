@@ -90,6 +90,7 @@
     <Compile Include="Assets\Scripts\DragBoxHandler.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IAttackable.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDamagable.cs" />
+    <Compile Include="Assets\Scripts\Interfaces\ITickable.cs" />
     <Compile Include="Assets\Scripts\Managers\InputManager.cs" />
     <Compile Include="Assets\Scripts\Managers\ResourceManager.cs" />
     <Compile Include="Assets\Scripts\Managers\TargetMarkerManager.cs" />

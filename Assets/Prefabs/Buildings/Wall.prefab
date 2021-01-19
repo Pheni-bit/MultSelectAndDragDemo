@@ -108,6 +108,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e58ffe670910cb6459f8d6708b85cefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  name: Wall
+  buildingLevel: 1
   sizeX: 3
   sizeY: 1
   transparentMaterial: {fileID: 2100000, guid: 61021e82f58c74044a386c50872253bb, type: 2}
@@ -116,6 +118,14 @@ MonoBehaviour:
   requiredResources: 00000000000000000100000001000000
   resourceAdds: 00000000000000000000000000000000
   resourceMults: 00000000000000000000000000000000
+  levelUpgradeResourceMultiplier:
+  - 1
+  - 1.25
+  - 1.5
+  buildPoints: 0
+  built: 0
+  mouseOverBuilding: 0
+  terrainManager: {fileID: 0}
 --- !u!114 &6788386536073589391
 MonoBehaviour:
   m_ObjectHideFlags: 0
