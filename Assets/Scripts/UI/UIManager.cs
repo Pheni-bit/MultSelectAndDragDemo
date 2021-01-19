@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour, ITickable
     public Image[] bottomPanelImageArr;
     public Text[] bottomPanelTextArr;
     public GameObject[] bottomSelected;
+    public GameObject[] selectedBuildingAddMultText;
     public GameObject formationPanel;
     public GameObject selectedBuildingPanel;
     GameObject selectedBuildingObj;
@@ -217,7 +218,7 @@ public class UIManager : MonoBehaviour, ITickable
         selectedBuildingObj = building;
         selectedBuildingPanel.SetActive(true);
         Building buildingScript = building.GetComponent<Building>();
-        selectedBuildingPanel.transform.GetChild(0).GetComponent<Text>().text = buildingScript.name.ToString();
+        selectedBuildingPanel.transform.GetChild(0).GetComponent<Text>().text = buildingScript.buildingName.ToString();
         selectedBuildingPanel.transform.GetChild(1).GetComponent<Text>().text = buildingScript.buildingLevel.ToString();
         GameObject buildingBuiltPanel = selectedBuildingPanel.transform.GetChild(2).gameObject;
         GameObject buildingNotBuildPanel = selectedBuildingPanel.transform.GetChild(3).gameObject;
@@ -226,6 +227,11 @@ public class UIManager : MonoBehaviour, ITickable
             buildingBuiltPanel.SetActive(true);
             buildingNotBuildPanel.SetActive(false);
             buildingBuiltPanel.transform.GetChild(0).GetComponent<Button>().interactable = buildingScript.HasTheRequiredResources();
+            for(int i = 0; i < selectedBuildingAddMultText.Length; i++)
+            {
+                selectedBuildingAddMultText[i].transform.GetChild(0).gameObject.GetComponent<Text>().text = buildingScript.currentAdds[i].ToString();
+                selectedBuildingAddMultText[i].transform.GetChild(1).gameObject.GetComponent<Text>().text = buildingScript.currentMults[i].ToString();
+            }
         }
         else
         {

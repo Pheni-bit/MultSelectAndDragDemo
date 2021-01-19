@@ -5,5 +5,4 @@ using UnityEngine;
 public class BuildingManager : MonoBehaviour
 {
     public static List<GameObject> BuildingsNeedingBuilt = new List<GameObject>();
-
 }

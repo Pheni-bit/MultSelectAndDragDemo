@@ -26,10 +26,10 @@ public class Bot : MonoBehaviour, IDamagable, IAttackable
     
 
     private void Awake()
-    {
+    {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
         botNav = GetComponent<BotNav>();
         botClickerData = GetComponent<BotClickerData>();
-        botProxy = transform.GetChild(0).GetComponent<BotProxy>();
+        botProxy = transform.GetComponentInChildren<BotProxy>();
         canAttack = true;
         AttackCoolDown = 2;
         AttackDamage = attackDamage;
@@ -72,9 +72,7 @@ public class Bot : MonoBehaviour, IDamagable, IAttackable
                         botNav.SetNavDestination(botClickerData.orderedPosition);
                     }
                 }
-                
-            }
-            
+            }   
         }
         else if (returnToOrders)
         {
@@ -152,8 +150,4 @@ public class Bot : MonoBehaviour, IDamagable, IAttackable
         cohort.AddComponent<Cohort>();
         return cohort;
     }
-
-
-
-
-    }
+}

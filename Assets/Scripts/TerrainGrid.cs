@@ -61,7 +61,7 @@ public class TerrainGrid : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("running");
+        //Debug.Log("running");
         UpdateSize();
         UpdatePosition();
         UpdateHeights();
@@ -177,7 +177,7 @@ public class TerrainGrid : MonoBehaviour
         Vector3 origin = new Vector3(x * cellSize + cellSize / 2, 200, z * cellSize + cellSize / 2);
         //Physics.Raycast(transform.TransformPoint(origin), Vector3.down, out hitInfo, Mathf.Infinity, LayerMask.GetMask("Buildings"));
         Physics.Raycast(transform.TransformPoint(origin), Vector3.down, out hitInfo, LayerMask.GetMask("Terrain"));;
-        Debug.Log(hitInfo.collider);
+        //Debug.Log(hitInfo.collider);
         if (hitInfo.collider)
         {
             if (hitInfo.collider.gameObject.CompareTag("Floor"))

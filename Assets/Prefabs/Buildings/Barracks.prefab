@@ -125,7 +125,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e58ffe670910cb6459f8d6708b85cefd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Barracks
+  buildingName: Barracks
+  maxLevel: 3
   buildingLevel: 0
   sizeX: 6
   sizeY: 3
@@ -133,15 +134,16 @@ MonoBehaviour:
   teamMaterial: {fileID: 2100000, guid: aa3f7bc196cfe8e4ca37c57389163915, type: 2}
   requiredBuildingPoints: 125
   requiredResources: 01000000010000000100000001000000
-  resourceAdds: 00000000000000000000000000000000
-  resourceMults: 00000000000000000000000000000000
+  resourceAdds: 01000000010000000100000001000000
+  resourceMults: 01000000010000000100000001000000
+  currentAdds: 00000000000000000000000000000000
+  currentMults: 00000000000000000000000000000000
   levelUpgradeResourceMultiplier:
   - 1
   - 1.25
   - 1.5
   buildPoints: 0
   built: 0
-  mouseOverBuilding: 0
   terrainManager: {fileID: 0}
 --- !u!1 &3808561483945745813
 GameObject:
