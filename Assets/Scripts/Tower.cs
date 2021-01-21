@@ -142,7 +142,7 @@ public class Tower : MonoBehaviour, IAttackable, IPointerClickHandler
                             {
                                 if (go.GetComponent<Bot>().team == assignedTeam)
                                 {
-                                    SetShootingTopColor(go.GetComponent<BotClickerData>().unselectedMaterial.color);
+                                    SetShootingTopColor(go.GetComponent<Bot>().unselectedMaterial.color);
                                     break;
                                 }
                             }

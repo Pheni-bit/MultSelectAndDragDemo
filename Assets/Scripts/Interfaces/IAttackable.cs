@@ -4,8 +4,7 @@ using UnityEngine;
 
 public interface IAttackable
 {
-   float AttackCoolDown { get; set; }
-  float AttackDamage { get; set; }
-     int AttackType { get; set; }
- void Attack();
+    float AttackCoolDown { get; set; }
+    float AttackDamage { get; set; }
+    void Attack();
 }

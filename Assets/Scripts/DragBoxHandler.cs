@@ -29,7 +29,7 @@ public class DragBoxHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         {
             if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl))
             {
-                BotClickerData.DeselectAll(new BaseEventData(EventSystem.current));
+                Bot.DeselectAll(new BaseEventData(EventSystem.current));
             }
             dragging = true;
             selectionBox.gameObject.SetActive(true);
@@ -43,7 +43,7 @@ public class DragBoxHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         }
         else if (Input.GetMouseButton(1))
         {
-            if (BotClickerData.currentlySelected.Count != 0)
+            if (Bot.currentlySelectedBots.Count != 0)
             {
                 startPos = eventData.position;
                 ray = Camera.main.ScreenPointToRay(eventData.position);
@@ -90,7 +90,7 @@ public class DragBoxHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         }
         else if (Input.GetMouseButton(1))
         {
-            if (BotClickerData.currentlySelected.Count != 0)
+            if (Bot.currentlySelectedBots.Count != 0)
             {
                 endPos = eventData.position;
                 ray = Camera.main.ScreenPointToRay(eventData.position);
@@ -110,7 +110,7 @@ public class DragBoxHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         if (Input.GetMouseButtonUp(0))
         {
             selectionBox.gameObject.SetActive(false);
-            foreach (BotClickerData bot in BotClickerData.allMySelectables)
+            foreach (Bot bot in Bot.allMySelectableBots)
             {
                 if (selectionRect.Contains(Camera.main.WorldToScreenPoint(bot.transform.position)))
                 {

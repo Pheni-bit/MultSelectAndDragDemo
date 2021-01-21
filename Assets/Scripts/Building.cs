@@ -25,7 +25,7 @@ public class Building : MonoBehaviour
     private void Awake()
     {
         //Debug.Log(levelUpgradeResourceMultiplier.Length + " lvlUpgradeResourceMult");
-        built = true;
+        //built = true;
         terrainManager = GameObject.Find("Terrain").GetComponent<TerrainManager>();
         buildingManager = GameObject.Find("BuildingManager").GetComponent<BuildingManager>();
         currentAdds = new int[4];
@@ -39,12 +39,12 @@ public class Building : MonoBehaviour
     private void OnMouseEnter()
     {
         terrainManager.building = true;
-        terrainManager.buildingSelected = this.gameObject;
+        terrainManager.buildingSelected = gameObject;
     }
     private void OnMouseExit()
     {
         terrainManager.building = false;
-        terrainManager.buildingSelected = this.gameObject;
+        terrainManager.buildingSelected = gameObject;
     }
     public void Init()
     {
@@ -75,18 +75,11 @@ public class Building : MonoBehaviour
     {
         buildPoints += points;
         if (requiredBuildingPoints <= buildPoints)
-        {
-            built = true;
             BuildingHasBeenBuilt();
-            BuildingManager.BuildingsNeedingBuilt.Remove(gameObject);
-            for (int i  = 0; i < buildingLevel; i++) //incase the building is being built on buildingLevel 2 for start vs buildingLevel 1 / potential technology upgrade
-            { 
-                AddOrSubResourceDifferences();
-            }
-        }
     }
     public void BuildingHasBeenBuilt()
     {
+        built = true;
         Collider collider = gameObject.GetComponent<Collider>();
         Renderer renderer = gameObject.GetComponent<Renderer>();
         NavMeshObstacle navMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
@@ -104,6 +97,11 @@ public class Building : MonoBehaviour
                 renderer1.material = teamMaterial;
             if (collider1 != null)
                 collider1.isTrigger = false;
+        }
+        BuildingManager.BuildingsNeedingBuilt.Remove(gameObject);
+        for (int i = 0; i < buildingLevel; i++) //incase the building is being built on buildingLevel 2 for start vs buildingLevel 1 / potential technology upgrade
+        {
+            AddOrSubResourceDifferences();
         }
     }
     public void AddOrSubResourceDifferences()

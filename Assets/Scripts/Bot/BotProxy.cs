@@ -7,7 +7,6 @@ public class BotProxy : MonoBehaviour
 {
     GameObject thisParent;
     Bot parentBot;
-
     public List<GameObject> EnemyProxies = new List<GameObject>();
     public List<float> enemyDistances = new List<float>();
     public float colliderRadius;
@@ -60,10 +59,10 @@ public class BotProxy : MonoBehaviour
         
         if (EnemyProxies.Count != 0)
         {
-            
             for (int i  = 0; i < EnemyProxies.Count; i++)
             {
-                if (EnemyProxies[i].GetComponent<Bot>().isDead == true)
+                GameObject enemyGO = EnemyProxies[i];
+                if (enemyGO == null) 
                 {
                     EnemyProxies.RemoveAt(i);
                 }
@@ -72,9 +71,7 @@ public class BotProxy : MonoBehaviour
         }
         else
         {
-
-                parentBot.enemysInRange = false;
-             
+                parentBot.enemysInRange = false;    
         }
     }
     int SortEnemyDistance(GameObject x, GameObject y)
@@ -87,4 +84,5 @@ public class BotProxy : MonoBehaviour
     {
         sphereCollider.radius = radius;
     }
+
 }

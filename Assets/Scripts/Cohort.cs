@@ -5,7 +5,7 @@ using UnityEngine;
 public class Cohort : MonoBehaviour
 {
     [SerializeField]
-    public string aggression;
+    public string aggression = "Guerrilla";
     [SerializeField]
     public string stance;
     [SerializeField]
@@ -24,44 +24,44 @@ public class Cohort : MonoBehaviour
     {
         gridWidth = 0;
         gridHeight = 0;
-        int currentlySelectedCount = BotClickerData.currentlySelected.Count;
+        int currentlySelectedBotsCount = Bot.currentlySelectedBots.Count;
         switch (stanceType)
         {
             case 0: //column
                 for (int n = 1; n < 20; n++)
                 {
-                    if ((n + 1) * (n * 3) > currentlySelectedCount)
+                    if ((n + 1) * (n * 3) > currentlySelectedBotsCount)
                     {
                         gridWidth = n;
                         break;
                     }
                 }
-                gridHeight = currentlySelectedCount % gridWidth == 0 ?
-                    currentlySelectedCount / gridWidth :
-                    ((currentlySelectedCount - (currentlySelectedCount % gridWidth)) / gridWidth) + 1;
+                gridHeight = currentlySelectedBotsCount % gridWidth == 0 ?
+                    currentlySelectedBotsCount / gridWidth :
+                    ((currentlySelectedBotsCount - (currentlySelectedBotsCount % gridWidth)) / gridWidth) + 1;
                 break;
             case 1: //line
                 for (int n = 1; n < 20; n++)
                 {
-                    if ((n + 1) * (n * 3) > currentlySelectedCount)
+                    if ((n + 1) * (n * 3) > currentlySelectedBotsCount)
                     {
                         gridHeight = n;
                         break;
                     }
                 }
-                gridWidth = currentlySelectedCount % gridHeight == 0 ?
-                    currentlySelectedCount / gridHeight :
-                    ((currentlySelectedCount - (currentlySelectedCount % gridHeight)) / gridHeight) + 1;
+                gridWidth = currentlySelectedBotsCount % gridHeight == 0 ?
+                    currentlySelectedBotsCount / gridHeight :
+                    ((currentlySelectedBotsCount - (currentlySelectedBotsCount % gridHeight)) / gridHeight) + 1;
                 break;
             case 2: //square
                 for (int n = 1; n < 20; n++)
                 {
-                    if ((n + 1) * (n + 1) > currentlySelectedCount)
+                    if ((n + 1) * (n + 1) > currentlySelectedBotsCount)
                     {
                         gridHeight = n;
-                        gridWidth = currentlySelectedCount % n == 0 ? 
-                            currentlySelectedCount / n :
-                            ((currentlySelectedCount - (currentlySelectedCount % n)) / n) + 1;
+                        gridWidth = currentlySelectedBotsCount % n == 0 ? 
+                            currentlySelectedBotsCount / n :
+                            ((currentlySelectedBotsCount - (currentlySelectedBotsCount % n)) / n) + 1;
                         break;
                     }
                 }
@@ -84,14 +84,14 @@ public class Cohort : MonoBehaviour
     void AssignBotsToFormationPosition(float botAggression)
     {
         int i = 0;
-        foreach (BotClickerData bot in BotClickerData.currentlySelected)
+        foreach (Bot bot in Bot.currentlySelectedBots)
         {
             bot.transform.parent = transform;
-            bot.MoveToPosition2(transform.TransformPoint(placementVectors[i]));
+            bot.MoveToPosition(transform.TransformPoint(placementVectors[i]));
             bot.transform.GetComponentInChildren<BotProxy>().SetRadius(botAggression);
             i++;
         }
-        BotClickerData.OrderedVectors();
+        Bot.OrderedVectors();
     }
     public int GetBotAggression()
     {

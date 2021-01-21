@@ -74,10 +74,11 @@
     <Compile Include="Assets\Scripts\Arrow.cs" />
     <Compile Include="Assets\Scripts\ArrowAttack.cs" />
     <Compile Include="Assets\Scripts\Bot\Bot.cs" />
+    <Compile Include="Assets\Scripts\Bot\BotArcher.cs" />
+    <Compile Include="Assets\Scripts\Bot\BotBasic.cs" />
     <Compile Include="Assets\Scripts\Bot\BotProxy.cs" />
-    <Compile Include="Assets\Scripts\Bot\BotUI.cs" />
-    <Compile Include="Assets\Scripts\BotClickerData.cs" />
-    <Compile Include="Assets\Scripts\BotNav.cs" />
+    <Compile Include="Assets\Scripts\Bot\BotSkirmisher.cs" />
+    <Compile Include="Assets\Scripts\Bot\BotWorker.cs" />
     <Compile Include="Assets\Scripts\Building.cs" />
     <Compile Include="Assets\Scripts\BuildingLevel.cs" />
     <Compile Include="Assets\Scripts\BuildingManager.cs" />

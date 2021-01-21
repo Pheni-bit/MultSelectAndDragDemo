@@ -28,7 +28,7 @@ public class TerrainManager : MonoBehaviour, IPointerClickHandler
         Debug.Log("Getting Called");
         if (Input.GetMouseButtonUp(0))
         {
-            BotClickerData.DeselectAll(eventData);
+            Bot.DeselectAll(eventData);
             if (building && terrainGrid.gameObject.activeSelf == false)
             {
                 Debug.Log("left clicking building");
@@ -51,10 +51,43 @@ public class TerrainManager : MonoBehaviour, IPointerClickHandler
         else if (Input.GetMouseButtonUp(1))
         {
             ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (building)
+            if (building) // are we hovering over a building when pressing 
             {
                 Debug.Log("right clicking building");
-                // if currently selected contains worker bots to build
+                if (!buildingSelected.GetComponent<Building>().built) // is building built 
+                {
+                    if (UIManager.Selected) // are bots selected
+                    {
+                        bool tempBool = false;
+                        foreach(Bot bot in Bot.currentlySelectedBots)
+                        {
+                            if (bot.botType == 0)
+                            {
+                                tempBool = true;
+                                break;
+                            }
+                        }
+                        if (tempBool)
+                        {
+                            List<Bot> tempWorkerBotList = new List<Bot>();
+                            worldPosition = buildingSelected.transform.position;
+                            foreach (Bot bot in Bot.currentlySelectedBots) // add worker bots to seperate list
+                            {
+                                if (bot.botType == 0)
+                                    tempWorkerBotList.Add(bot);
+                            }
+                            Bot.DeselectAll(eventData); // deselect all from hashSet
+                            foreach(Bot bot in tempWorkerBotList) // reselect bots from temp list
+                            {
+                                bot.OnSelect(eventData);
+                            }
+                            AnyCohorts();
+                            DetectAndCreateCohort();
+                            RemovePriorEmptyCohort();
+                            UIManager.Instance.GetSelectedCohort(); //for ui i think
+                        }
+                    }
+                }
             }
             else if (Physics.Raycast(ray, out RaycastHit hitData, 1000, LayerMask.GetMask("Terrain")))
             {
@@ -70,17 +103,17 @@ public class TerrainManager : MonoBehaviour, IPointerClickHandler
             
         }
     }
-    public void UpdateCohort(/*Vector3 newWorldPos*/)
+    public void UpdateCohort() // called from the ui manager when changes to the formation are made
     {
         int childCount = 0;
-        foreach(BotClickerData bot in BotClickerData.currentlySelected)
+        foreach(Bot bot in Bot.currentlySelectedBots)
         {
             childCount = bot.transform.parent.childCount;
             break;
         }
-        if (BotClickerData.currentlySelected.Count != childCount)
+        if (Bot.currentlySelectedBots.Count != childCount)
         {
-            foreach (BotClickerData bot in BotClickerData.currentlySelected)
+            foreach (Bot bot in Bot.currentlySelectedBots)
             {
                 worldPosition = bot.transform.position;
                 break;
@@ -88,13 +121,12 @@ public class TerrainManager : MonoBehaviour, IPointerClickHandler
         }
         else
         {
-            foreach(BotClickerData bot in BotClickerData.currentlySelected)
+            foreach(Bot bot in Bot.currentlySelectedBots)
             {
                 worldPosition = bot.transform.parent.position;
                 break;
             }
         }
-        //worldPosition = newWorldPos;
         AnyCohorts();
         DetectAndCreateCohort();
         RemovePriorEmptyCohort();
@@ -110,7 +142,7 @@ public class TerrainManager : MonoBehaviour, IPointerClickHandler
     public void AnyCohorts()
     {
         priorCohorts.Clear();
-        foreach (BotClickerData bot in BotClickerData.currentlySelected)
+        foreach (Bot bot in Bot.currentlySelectedBots)
         {
             if (bot.transform.parent.CompareTag("Cohort"))
             {
@@ -124,6 +156,13 @@ public class TerrainManager : MonoBehaviour, IPointerClickHandler
         cohortRotation = dragBoxHandler.tempArrowRotation;
         cohort = NewCohort(worldPosition, cohortRotation);
         cohort.GetComponent<Cohort>().Init();
+        if (building)
+        {
+            foreach (Bot bot in Bot.currentlySelectedBots)
+            {
+                bot.gameObject.GetComponent<BotWorker>().OrderedToBuild(buildingSelected);
+            }
+        }
     }
     void RemovePriorEmptyCohort()
     {

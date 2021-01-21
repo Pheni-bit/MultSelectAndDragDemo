@@ -50,7 +50,7 @@ public class UIManager : MonoBehaviour, ITickable
     }
     void SetSelected()
     {
-        if (BotClickerData.currentlySelected.Count > 0)
+        if (Bot.currentlySelectedBots.Count > 0)
             Selected = true;
         else
         {
@@ -68,7 +68,7 @@ public class UIManager : MonoBehaviour, ITickable
     }
     void OnSelectedCountChange()
     {
-        if (lastSelectedCount != BotClickerData.currentlySelected.Count)
+        if (lastSelectedCount != Bot.currentlySelectedBots.Count)
         {
             if (Selected)
             {
@@ -76,7 +76,7 @@ public class UIManager : MonoBehaviour, ITickable
             }
             CompareBot();
         }
-        lastSelectedCount = BotClickerData.currentlySelected.Count;
+        lastSelectedCount = Bot.currentlySelectedBots.Count;
     }
     void IfBuildingPanelOpen() // shows the running building points and progression bar for building the building
     {
@@ -100,7 +100,7 @@ public class UIManager : MonoBehaviour, ITickable
     public void GetSelectedCohort()
     {
         selectedCohorts.Clear();
-        foreach (BotClickerData bot in BotClickerData.currentlySelected)
+        foreach (Bot bot in Bot.currentlySelectedBots)
         {
             if (bot.transform.parent.CompareTag("Cohort"))
             {
@@ -122,7 +122,7 @@ public class UIManager : MonoBehaviour, ITickable
         int bot0 = 0;
         int bot1 = 0;
         Color color = Color.white;
-        foreach (BotClickerData bot in BotClickerData.currentlySelected)
+        foreach (Bot bot in Bot.currentlySelectedBots)
         {
             if (bot.botType == 0)
             {
@@ -134,9 +134,9 @@ public class UIManager : MonoBehaviour, ITickable
             }
         }
         //Debug.Log(bot0 + " " + bot1);
-        foreach (BotClickerData bot in BotClickerData.currentlySelected)
+        foreach (Bot bot in Bot.currentlySelectedBots)
         {
-            color = bot.GetComponent<BotClickerData>().unselectedMaterial.color;
+            color = bot.GetComponent<Bot>().unselectedMaterial.color;
             break;
         }
         if (bot0 > 0)
