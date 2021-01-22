@@ -35,7 +35,7 @@ public class UIManager : MonoBehaviour, ITickable
     }
     private void Start()
     {
-        Debug.Log("scale factor = " + gameObject.GetComponent<Canvas>().scaleFactor);
+        //Debug.Log("scale factor = " + gameObject.GetComponent<Canvas>().scaleFactor);
         _instance = this;
         terrainManager = GameObject.Find("Terrain").GetComponent<TerrainManager>();
         ResourceManager.tickables.Add(this.gameObject);

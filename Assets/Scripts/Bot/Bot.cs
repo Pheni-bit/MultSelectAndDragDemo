@@ -10,7 +10,7 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
     BotProxy botProxy;
     GameObject enemyTarget;
     GameObject parentCohort;
-    NavMeshAgent navMeshAgent;
+    public NavMeshAgent navMeshAgent;
     Renderer myRenderer;
     public Material unselectedMaterial, selectedMaterial;
     static TargetMarkerManager targetMarkerManager;
@@ -18,8 +18,8 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
     public static HashSet<Bot> currentlySelectedBots = new HashSet<Bot>();
     public static List<Vector3> orderPosList = new List<Vector3>();
     public Vector3 orderedPosition;
-    bool directOrder, removeThis;
-    public bool enemysInRange, canAttack,  returnToOrders, isDead;
+    public bool directOrder, removeThis;
+    public bool enemysInRange, canAttack = true,  returnToOrders, isDead;
     private float pathEndThreshold = 1.5f;
 
     // BOT PROPERTIES   {
@@ -56,13 +56,13 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
         orderedPosition = transform.position;
         allMySelectableBots.Add(this); 
     }
-    private void Update()
+    public virtual void Update()
     {
         if (isDead)
             return;
         if (transform.parent.gameObject != parentCohort) 
         {
-            parentCohort = transform.parent.name == "Cohort" ? transform.parent.gameObject : null;
+            parentCohort = transform.parent.CompareTag("Cohort") ? transform.parent.gameObject : null;
         }
         if (parentCohort != null)
         {
@@ -78,52 +78,90 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
             removeThis = false;
         }
     }
-    public void ManageOrders()
+    public virtual void ManageOrders()
     {
         switch (parentCohort.GetComponent<Cohort>().aggression)
         {
             case "Defend":
-                        if (directOrder)
-        {
-            returnToOrders = true;
-            directOrder = CompletedOrder();
-        }
+                if (directOrder)
+                {
+                    returnToOrders = true;
+                    directOrder = CompletedOrder();
+                }
+                else if (enemysInRange)
+                {
+                    returnToOrders = true;
+                    if (botProxy.EnemyProxies.Count != 0)
+                    {
+                        enemyTarget = botProxy.EnemyProxies[0];
+                        if (enemyTarget != null)
+                        {
+                            if (Vector3.Distance(orderedPosition, enemyTarget.transform.position) <= botProxy.colliderRadius + 1)
+                            {
+                                Attack();
+                            }
+                            else if (returnToOrders)
+                            {
+                                SetNavDestination(orderedPosition);
+                            }
+                        }
+                    }
+                }
+                else if (returnToOrders)
+                {
+                    SetNavDestination(orderedPosition);
+                    returnToOrders = false;
+                }
                 break;
             case "Guerrilla":
+                if (enemysInRange)
+                {
+                    returnToOrders = true;
+                    if (botProxy.EnemyProxies.Count != 0)
+                    {
+                        enemyTarget = botProxy.EnemyProxies[0];
+                        if (enemyTarget != null)
+                        {
+                            if (Vector3.Distance(orderedPosition, enemyTarget.transform.position) <= botProxy.colliderRadius + 1)
+                            {
+                                Attack();
+                            }
+                            else if (returnToOrders)
+                            {
+                                SetNavDestination(orderedPosition);
+                            }
+                        }
+                    }
+                }
+                else if (returnToOrders)
+                {
+                    SetNavDestination(orderedPosition);
+                    returnToOrders = false;
+                }
                 break;
             case "Aggressive":
+                if (enemysInRange)
+                {
+                    returnToOrders = true;
+                    if (botProxy.EnemyProxies.Count != 0)
+                    {
+                        enemyTarget = botProxy.EnemyProxies[0];
+                        if (enemyTarget != null)
+                        {
+                            if (Vector3.Distance(orderedPosition, enemyTarget.transform.position) <= botProxy.colliderRadius + 1)
+                            {
+                                Attack();
+                            }
+                            else if (returnToOrders)
+                            {
+                                SetNavDestination(orderedPosition);
+                            }
+                        }
+                    }
+                }
                 break;
             default:
                 break;
-        }
-        if (directOrder)
-        {
-            returnToOrders = true;
-            directOrder = CompletedOrder();
-        }
-        else if (enemysInRange)
-        {
-            returnToOrders = true;
-            if (botProxy.EnemyProxies.Count != 0)
-            {
-                enemyTarget = botProxy.EnemyProxies[0];
-                if (enemyTarget != null) 
-                {
-                    if (Vector3.Distance(orderedPosition, enemyTarget.transform.position) <= botProxy.colliderRadius + 1)
-                    {
-                        Attack();
-                    }
-                    else if (returnToOrders)
-                    {
-                        SetNavDestination(orderedPosition);
-                    }
-                }
-            }   
-        }
-        else if (returnToOrders)
-        {
-            SetNavDestination(orderedPosition);
-            returnToOrders = false;
         }
     }
 
@@ -212,7 +250,10 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
     public void MoveToPosition(Vector3 vec)
     {
         orderedPosition = vec;
-        directOrder = true;
+        if (!TerrainManager.building)
+            directOrder = true;
+        else
+            directOrder = false;
         SetNavDestination((vec));
     }
     public static void OrderedVectors()

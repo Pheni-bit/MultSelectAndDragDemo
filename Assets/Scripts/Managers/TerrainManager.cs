@@ -12,7 +12,7 @@ public class TerrainManager : MonoBehaviour, IPointerClickHandler
     GameObject charactersHolder;
     Cohort createdCohort;
     GameObject cohort;
-    public bool building;
+    public static bool building;
     public GameObject buildingSelected;
 
     public List<GameObject> priorCohorts = new List<GameObject>();
@@ -25,13 +25,13 @@ public class TerrainManager : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         UIManager.Instance.BuildingUIOff();
-        Debug.Log("Getting Called");
+        //Debug.Log("Getting Called");
         if (Input.GetMouseButtonUp(0))
         {
             Bot.DeselectAll(eventData);
             if (building && terrainGrid.gameObject.activeSelf == false)
             {
-                Debug.Log("left clicking building");
+                //Debug.Log("left clicking building");
                 //buildingSelected
                 UIManager.Instance.BuildingUI(buildingSelected);
             }

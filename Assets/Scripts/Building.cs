@@ -38,12 +38,12 @@ public class Building : MonoBehaviour
     }
     private void OnMouseEnter()
     {
-        terrainManager.building = true;
+        TerrainManager.building = true;
         terrainManager.buildingSelected = gameObject;
     }
     private void OnMouseExit()
     {
-        terrainManager.building = false;
+        TerrainManager.building = false;
         terrainManager.buildingSelected = gameObject;
     }
     public void Init()
@@ -86,7 +86,9 @@ public class Building : MonoBehaviour
         if (collider != null)
             collider.enabled = true;
         if (navMeshObstacle != null)
+        {
             navMeshObstacle.enabled = true;
+        }
         if (renderer != null)
             renderer.material = teamMaterial;
         for (int i = 0; i < transform.childCount; i++)
