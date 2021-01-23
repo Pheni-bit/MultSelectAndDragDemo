@@ -232,6 +232,8 @@ MonoBehaviour:
   sizeY: 5
   transparentMaterial: {fileID: 2100000, guid: 61021e82f58c74044a386c50872253bb, type: 2}
   teamMaterial: {fileID: 2100000, guid: aa3f7bc196cfe8e4ca37c57389163915, type: 2}
+  spotCheckerPrefab: {fileID: 8875995297742105721, guid: aa041b9c68e513c40873443cd2c27a70,
+    type: 3}
   requiredBuildingPoints: 200
   requiredResources: 01000000010000000100000001000000
   resourceAdds: 01000000010000000100000001000000
@@ -245,6 +247,7 @@ MonoBehaviour:
   buildPoints: 0
   built: 0
   terrainManager: {fileID: 0}
+  assignedBuildingPositions: []
 --- !u!1 &8444639473445474752
 GameObject:
   m_ObjectHideFlags: 0

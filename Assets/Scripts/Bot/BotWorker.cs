@@ -14,12 +14,12 @@ public class BotWorker : Bot
         targetOrderedToBuild = buildTarget;
         getBuilding = true;
     }
-    public override void ManageOrders()
+    public override void ManageOrders() // called in base update
     {
 
         base.ManageOrders();
         if (!directOrder)
-        { 
+        {
             if (getBuilding)
             {
                 if (!targetOrderedToBuild.GetComponent<Building>().built)
@@ -28,18 +28,20 @@ public class BotWorker : Bot
                 }
                 else
                 {
+
                     closeEnough = false;
                     getBuilding = false;
+
                 }
             }
-            else if (toggledToBuild)
+            else if (toggledToBuild && BuildingManager.BuildingsNeedingBuilt.Count > 0)
             {
                 getBuilding = true;
                 List<GameObject> tempList = BuildingManager.BuildingsNeedingBuilt;
                 tempList.Sort(SortBuildingsNeededBuiltDistances);
                 targetOrderedToBuild = tempList[0];
             }
-        } 
+        }
         else
             closeEnough = false;
     }
@@ -51,7 +53,7 @@ public class BotWorker : Bot
     }
     void GoToBuildingTarget()
     {
-        Debug.Log("GETTING CALLED TO BUILD");
+        //Debug.Log("GETTING CALLED TO BUILD");
         Ray buildRay = new Ray(transform.position, navMeshAgent.transform.forward);
         if (!closeEnough)
             SetNavDestination(targetOrderedToBuild.transform.position);
@@ -81,7 +83,6 @@ public class BotWorker : Bot
         {
             targetOrderedToBuild.GetComponent<Building>()
                   .AddBuildingPoints(buildPointsAddedPerTick);
-            Debug.Log("GEtHERE4");
         }
         transform.Translate(Vector3.forward * -0.2f);
         yield return new WaitForSeconds(0.9f);
