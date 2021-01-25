@@ -5,10 +5,18 @@ using UnityEngine;
 public class BotWorker : Bot
 {
     GameObject targetOrderedToBuild;
-    bool getBuilding, canAddBuildPoints = true;
-    public bool toggledToBuild;
-    public bool closeEnough;
+    Vector3 posAssignedToBuild;
+    bool getBuilding;
+    public bool toggledToBuild = true;
+    public bool canAddBuildPoints;
     int buildPointsAddedPerTick = 1;
+    float buildingTick = 1;
+    float tempTime;
+    public override void Awake()
+    {
+        base.Awake();
+        toggledToBuild = true;
+    }
     public void OrderedToBuild(GameObject buildTarget)
     {
         targetOrderedToBuild = buildTarget;
@@ -18,32 +26,56 @@ public class BotWorker : Bot
     {
 
         base.ManageOrders();
-        if (!directOrder)
-        {
+        //if (!directOrder)
+        //{
             if (getBuilding)
             {
-                if (!targetOrderedToBuild.GetComponent<Building>().built)
+                if (targetOrderedToBuild)
                 {
-                    GoToBuildingTarget();
+                    if (!targetOrderedToBuild.GetComponent<Building>().built)
+                    {
+                        GoToBuildingTarget();
+                    }
+                    else
+                    {
+                        posAssignedToBuild = Vector3.zero;
+                        getBuilding = false;
+                    }
                 }
                 else
                 {
-
-                    closeEnough = false;
+                    posAssignedToBuild = Vector3.zero;
                     getBuilding = false;
-
                 }
+
             }
             else if (toggledToBuild && BuildingManager.BuildingsNeedingBuilt.Count > 0)
             {
+                //Debug.Log("Getting here");
                 getBuilding = true;
-                List<GameObject> tempList = BuildingManager.BuildingsNeedingBuilt;
+                List<GameObject> tempList =  BuildingManager.BuildingsNeedingBuilt;
                 tempList.Sort(SortBuildingsNeededBuiltDistances);
-                targetOrderedToBuild = tempList[0];
+                for(int i = 0; i < tempList.Count; i++)
+                {
+                    Vector3 tempVec = tempList[i].GetComponent<Building>().ReturnAvailableBuildSpot(gameObject);
+                    if (tempVec != Vector3.zero)
+                    {
+                        targetOrderedToBuild = tempList[i];
+                        posAssignedToBuild = tempVec;
+                        Debug.Log(targetOrderedToBuild);
+                        break;
+                    }
+
+                }
+                
             }
-        }
-        else
-            closeEnough = false;
+            else
+            {
+                posAssignedToBuild = Vector3.zero;
+            }
+        //}
+        //else
+            //posAssignedToBuild = Vector3.zero;
     }
     int SortBuildingsNeededBuiltDistances(GameObject x, GameObject y)
     {
@@ -54,25 +86,28 @@ public class BotWorker : Bot
     void GoToBuildingTarget()
     {
         //Debug.Log("GETTING CALLED TO BUILD");
-        Ray buildRay = new Ray(transform.position, navMeshAgent.transform.forward);
-        if (!closeEnough)
-            SetNavDestination(targetOrderedToBuild.transform.position);
-        else
-            SetNavDestination(transform.position);
-        SetNavRotation(targetOrderedToBuild);
-        if (Physics.Raycast(buildRay, out RaycastHit hit, 1.5f, ~gameObject.layer))
+        if (posAssignedToBuild == Vector3.zero)
+            posAssignedToBuild = targetOrderedToBuild.GetComponent<Building>().ReturnAvailableBuildSpot(gameObject);
+        if (posAssignedToBuild != Vector3.zero)
         {
-            if (hit.transform.gameObject == targetOrderedToBuild)
+            SetNavDestination(posAssignedToBuild);
+            SetStoppingDistance(0);
+            SetNavRotation(targetOrderedToBuild);
+            if (CompletedOrder())
             {
-                closeEnough = true;
                 if (canAddBuildPoints)
                 {
-                    canAddBuildPoints = false;
-                    StartCoroutine(AddBuildPointsCoolDownRoutine());
+                    if (Time.time > buildingTick + tempTime)
+                    {
+                        tempTime = Time.time;
+                        StartCoroutine(AddBuildPointsCoolDownRoutine());
+                    }
                 }
             }
-            else
-                closeEnough = false;
+        }
+        else
+        {
+
         }
     }
     IEnumerator AddBuildPointsCoolDownRoutine()
@@ -86,6 +121,5 @@ public class BotWorker : Bot
         }
         transform.Translate(Vector3.forward * -0.2f);
         yield return new WaitForSeconds(0.9f);
-        canAddBuildPoints = true;
     }
 }

@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3808561483520812584}
   m_Layer: 2
   m_Name: Barracks
-  m_TagString: Untagged
+  m_TagString: Building
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -147,8 +147,7 @@ MonoBehaviour:
   buildPoints: 0
   built: 0
   terrainManager: {fileID: 0}
-  spotCheckerOffset: {x: 3.75, y: 0, z: 2.25}
-  assignedBuildingPositions: []
+  spawnBuildSpots: []
 --- !u!1 &3808561483945745813
 GameObject:
   m_ObjectHideFlags: 0
@@ -163,7 +162,7 @@ GameObject:
   - component: {fileID: 3808561483945745815}
   m_Layer: 2
   m_Name: MidSection
-  m_TagString: Untagged
+  m_TagString: Building
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -256,7 +255,7 @@ GameObject:
   - component: {fileID: 3808561483971495478}
   m_Layer: 2
   m_Name: TopSection
-  m_TagString: Untagged
+  m_TagString: Building
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

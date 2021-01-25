@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2386770243355383654}
   m_Layer: 2
   m_Name: TowerFarm
-  m_TagString: Untagged
+  m_TagString: Building
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 2386770244041275126}
   m_Layer: 2
   m_Name: Farm
-  m_TagString: Untagged
+  m_TagString: Building
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -210,7 +210,7 @@ MonoBehaviour:
   buildPoints: 0
   built: 0
   terrainManager: {fileID: 0}
-  assignedBuildingPositions: []
+  spawnBuildSpots: []
 --- !u!208 &2386770244041275127
 NavMeshObstacle:
   m_ObjectHideFlags: 0

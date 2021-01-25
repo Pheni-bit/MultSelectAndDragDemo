@@ -249,8 +249,10 @@ public class TerrainGrid : MonoBehaviour
     public void PlaceObject()
     {
         GameObject builtObj = Instantiate(objToBuild, tempBuildObj.transform.position, tempBuildObj.transform.rotation);
-
-        builtObj.GetComponent<Building>().Init();
+        Building building = builtObj.GetComponent<Building>();
+        building.sizeX = gridWidth;
+        building.sizeY = gridHeight;
+        building.Init();
     }
 
     public void TurnOff()

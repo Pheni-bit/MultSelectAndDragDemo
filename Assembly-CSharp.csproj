@@ -47,6 +47,7 @@
   <PropertyGroup>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <UnityProjectGenerator>Unity/VSTU</UnityProjectGenerator>
+    <UnityProjectGeneratorVersion>4.8.2.0</UnityProjectGeneratorVersion>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>2019.4.15f1</UnityVersion>
@@ -79,9 +80,8 @@
     <Compile Include="Assets\Scripts\Bot\BotProxy.cs" />
     <Compile Include="Assets\Scripts\Bot\BotSkirmisher.cs" />
     <Compile Include="Assets\Scripts\Bot\BotWorker.cs" />
-    <Compile Include="Assets\Scripts\Building.cs" />
-    <Compile Include="Assets\Scripts\BuildingLevel.cs" />
-    <Compile Include="Assets\Scripts\BuildingManager.cs" />
+    <Compile Include="Assets\Scripts\BuildSpawnSpotChecker.cs" />
+    <Compile Include="Assets\Scripts\Buildings\Building.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraMovements.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraRotation.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraScroll.cs" />
@@ -89,15 +89,16 @@
     <Compile Include="Assets\Scripts\Cohort.cs" />
     <Compile Include="Assets\Scripts\CohortSwitches.cs" />
     <Compile Include="Assets\Scripts\DragBoxHandler.cs" />
+    <Compile Include="Assets\Scripts\Environment\SunLight.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IAttackable.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDamagable.cs" />
     <Compile Include="Assets\Scripts\Interfaces\ITickable.cs" />
+    <Compile Include="Assets\Scripts\Managers\BuildingManager.cs" />
     <Compile Include="Assets\Scripts\Managers\InputManager.cs" />
     <Compile Include="Assets\Scripts\Managers\ResourceManager.cs" />
     <Compile Include="Assets\Scripts\Managers\TargetMarkerManager.cs" />
     <Compile Include="Assets\Scripts\Managers\TerrainManager.cs" />
     <Compile Include="Assets\Scripts\Managers\TimeSpeedManager.cs" />
-    <Compile Include="Assets\Scripts\SunLight.cs" />
     <Compile Include="Assets\Scripts\TerrainGrid.cs" />
     <Compile Include="Assets\Scripts\TestScript.cs" />
     <Compile Include="Assets\Scripts\Tower.cs" />

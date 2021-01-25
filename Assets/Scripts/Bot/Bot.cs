@@ -36,7 +36,7 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
     public float AttackDamage { get; set; }
     //                              }
 
-    private void Awake()
+    public virtual void Awake()
     {
         botProxy = transform.GetComponentInChildren<BotProxy>();
         navMeshAgent = GetComponent<NavMeshAgent>();
@@ -116,6 +116,7 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
             case "Guerrilla":
                 if (enemysInRange)
                 {
+                    directOrder = false;
                     returnToOrders = true;
                     if (botProxy.EnemyProxies.Count != 0)
                     {
