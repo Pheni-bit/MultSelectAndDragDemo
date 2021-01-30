@@ -16,10 +16,11 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
     static TargetMarkerManager targetMarkerManager;
     public static HashSet<Bot> allMySelectableBots = new HashSet<Bot>();
     public static HashSet<Bot> currentlySelectedBots = new HashSet<Bot>();
+    public List<GameObject> enemysToAttack = new List<GameObject>();
     public static List<Vector3> orderPosList = new List<Vector3>();
     public Vector3 orderedPosition;
     public bool directOrder, removeThis;
-    public bool enemysInRange, canAttack = true,  returnToOrders, isDead;
+    public bool enemysInRange, canAttack,  returnToOrders, isDead, inCombat;
     private float pathEndThreshold = 1.5f;
 
     // BOT PROPERTIES   {
@@ -38,6 +39,7 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
 
     public virtual void Awake()
     {
+        
         botProxy = transform.GetComponentInChildren<BotProxy>();
         navMeshAgent = GetComponent<NavMeshAgent>();
         myRenderer = GetComponent<Renderer>();
@@ -60,12 +62,21 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
     {
         if (isDead)
             return;
+        if (enemysToAttack.Count > 0)
+        {
+            inCombat = true;
+        }
+        else
+        {
+            inCombat = false;
+        }
         if (transform.parent.gameObject != parentCohort) 
         {
             parentCohort = transform.parent.CompareTag("Cohort") ? transform.parent.gameObject : null;
         }
         if (parentCohort != null)
         {
+            SetStoppingDistance(0);
             ManageOrders();
         }
         Debug.DrawRay(gameObject.transform.position, navMeshAgent.transform.forward * 1, Color.blue);
@@ -85,81 +96,63 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
             case "Defend":
                 if (directOrder)
                 {
-                    returnToOrders = true;
-                    directOrder = CompletedOrder();
+                    directOrder = !CompletedOrder();
                 }
-                else if (enemysInRange)
+                else if (inCombat == true)
                 {
-                    returnToOrders = true;
-                    if (botProxy.EnemyProxies.Count != 0)
+                    ClearNullsInListAndSort();
+                    if (enemysToAttack.Count > 0)
                     {
-                        enemyTarget = botProxy.EnemyProxies[0];
+                        enemyTarget = enemysToAttack[0];
                         if (enemyTarget != null)
                         {
-                            if (Vector3.Distance(orderedPosition, enemyTarget.transform.position) <= botProxy.colliderRadius + 1)
+                            if (Vector3.Distance(orderedPosition, enemyTarget.transform.position) <= 10)
                             {
                                 Attack();
                             }
-                            else if (returnToOrders)
-                            {
-                                SetNavDestination(orderedPosition);
-                            }
+                            else
+                                navMeshAgent.SetDestination(orderedPosition);
                         }
                     }
                 }
-                else if (returnToOrders)
-                {
-                    SetNavDestination(orderedPosition);
-                    returnToOrders = false;
-                }
+                else
+                    navMeshAgent.SetDestination(orderedPosition);
                 break;
             case "Guerrilla":
-                if (enemysInRange)
+                if (directOrder)
                 {
-                    directOrder = false;
-                    returnToOrders = true;
-                    if (botProxy.EnemyProxies.Count != 0)
+                    directOrder = !CompletedOrder();
+                }
+                else if (inCombat == true)
+                {
+                    ClearNullsInListAndSort();
+                    if (enemysToAttack.Count > 0)
                     {
-                        enemyTarget = botProxy.EnemyProxies[0];
+                        enemyTarget = enemysToAttack[0];
                         if (enemyTarget != null)
                         {
-                            if (Vector3.Distance(orderedPosition, enemyTarget.transform.position) <= botProxy.colliderRadius + 1)
-                            {
-                                Attack();
-                            }
-                            else if (returnToOrders)
-                            {
-                                SetNavDestination(orderedPosition);
-                            }
+                            Attack();
                         }
                     }
                 }
-                else if (returnToOrders)
-                {
-                    SetNavDestination(orderedPosition);
-                    returnToOrders = false;
-                }
+                else
+                    navMeshAgent.SetDestination(orderedPosition);
                 break;
             case "Aggressive":
-                if (enemysInRange)
+                if (inCombat == true)
                 {
-                    returnToOrders = true;
-                    if (botProxy.EnemyProxies.Count != 0)
+                    ClearNullsInListAndSort();
+                    if (enemysToAttack.Count > 0)
                     {
-                        enemyTarget = botProxy.EnemyProxies[0];
+                        enemyTarget = enemysToAttack[0];
                         if (enemyTarget != null)
                         {
-                            if (Vector3.Distance(orderedPosition, enemyTarget.transform.position) <= botProxy.colliderRadius + 1)
-                            {
-                                Attack();
-                            }
-                            else if (returnToOrders)
-                            {
-                                SetNavDestination(orderedPosition);
-                            }
+                            Attack();
                         }
                     }
                 }
+                else
+                    navMeshAgent.SetDestination(orderedPosition);
                 break;
             default:
                 break;
@@ -168,11 +161,11 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
 
     public virtual void Attack()
     {
-        SetStoppingDistance(1.4f);
+        SetStoppingDistance(1.6f);
         if (enemyTarget)
         {
             Ray attackRay = new Ray(transform.position, navMeshAgent.transform.forward);
-            SetNavDestination(enemyTarget.transform.position);
+            navMeshAgent.SetDestination(enemyTarget.transform.position);
             SetNavRotation(enemyTarget);
             if (Physics.Raycast(attackRay, out RaycastHit hit, 1.5f, ~gameObject.layer))
             {
@@ -192,7 +185,6 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
     {
         //Debug.Log("were damaging");
         Health -= damage;
-        directOrder = false;
         if (Health <= 0)
         {
             isDead = true;
@@ -200,6 +192,10 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
             this.gameObject.GetComponent<Collider>().enabled = false;
             Destroy(this.gameObject);
         }
+        if (parentCohort.GetComponent<Cohort>().aggression != "Defend")
+        {
+            directOrder = false;
+        } 
     }
 
 
@@ -251,11 +247,8 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
     public void MoveToPosition(Vector3 vec)
     {
         orderedPosition = vec;
-        if (!TerrainManager.building)
-            directOrder = true;
-        else
-            directOrder = false;
-        SetNavDestination((vec));
+        navMeshAgent.SetDestination((vec));
+        directOrder = true;
     }
     public static void OrderedVectors()
     {
@@ -272,6 +265,7 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
         }
 
         // below needs work
+        /*
         if (orderPosList.Count > 0)
         {
             foreach (Bot bot in currentlySelectedBots)
@@ -284,6 +278,18 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
         {
             targetMarkerManager.DestroyMarkers();
         }
+        */
+    }
+    void ClearNullsInListAndSort()
+    {
+        for(int i = 0; i < enemysToAttack.Count; i++)
+        {
+            if (enemysToAttack[i] == null)
+            {
+                enemysToAttack.RemoveAt(i);
+            }
+        }
+        enemysToAttack.Sort(SortEnemyDistance);
     }
     private void OnDestroy()
     {
@@ -311,14 +317,16 @@ public abstract class Bot : MonoBehaviour, IDamagable, IAttackable, ISelectHandl
     {
         navMeshAgent.stoppingDistance = distance;
     }
-    public void SetNavDestination(Vector3 destination)
-    {
-        navMeshAgent.SetDestination(destination);
-    }
     public void SetNavRotation(GameObject enemy)
     {
         navMeshAgent.transform.LookAt(enemy.transform.position);
         navMeshAgent.transform.rotation = new Quaternion(0, this.transform.rotation.y, 0, this.transform.rotation.w);
+    }
+    int SortEnemyDistance(GameObject x, GameObject y)
+    {
+        float distanceToX = Vector3.Distance(transform.position, x.transform.position);
+        float distanceToY = Vector3.Distance(transform.position, y.transform.position);
+        return distanceToX.CompareTo(distanceToY);
     }
     IEnumerator AttackCoolDownRoutine(GameObject hitObj)
     {

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1514505230}
   m_Layer: 2
   m_Name: ProxyCollider
-  m_TagString: Untagged
+  m_TagString: Proxy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -74,7 +74,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf171d9d1fab61f458b7f44a19d9c6c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnemyProxies: []
   enemyDistances: []
   colliderRadius: 5
 --- !u!1 &625483686304618014
@@ -225,14 +224,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 417fdf42bd40e43468f8436b01a65d5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  navMeshAgent: {fileID: 0}
   unselectedMaterial: {fileID: 2100000, guid: aa3f7bc196cfe8e4ca37c57389163915, type: 2}
   selectedMaterial: {fileID: 2100000, guid: 841a74873a32fc54e825d03011175b79, type: 2}
+  enemysToAttack: []
   orderedPosition: {x: 0, y: 0, z: 0}
+  directOrder: 0
+  removeThis: 0
   enemysInRange: 0
   canAttack: 0
   returnToOrders: 0
   isDead: 0
-  team: 0
+  inCombat: 0
+  team: 1
   botType: 2
   attackDamage: 1
   health: 10

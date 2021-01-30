@@ -15,6 +15,7 @@ TagManager:
   - Cohort
   - Undefined
   - Building
+  - Proxy
   layers:
   - Default
   - TransparentFX

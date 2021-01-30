@@ -139,7 +139,7 @@ public class TerrainManager : MonoBehaviour, IPointerClickHandler
         else
             return hit.point;
     }
-    public void AnyCohorts()
+    public void AnyCohorts() //collects and makes a list of all the cohorts from currently selected bots
     {
         priorCohorts.Clear();
         foreach (Bot bot in Bot.currentlySelectedBots)
@@ -190,6 +190,7 @@ public class TerrainManager : MonoBehaviour, IPointerClickHandler
         {
             Cohort thisCohortSwitch = cohort.GetComponent<Cohort>();
             Cohort priorCohortScript = priorCohorts[0].GetComponent<Cohort>();
+            thisCohortSwitch.enemyProxies = priorCohortScript.enemyProxies;
             thisCohortSwitch.aggression = priorCohortScript.aggression;
             thisCohortSwitch.density = priorCohortScript.density;
             thisCohortSwitch.stance = priorCohortScript.stance;

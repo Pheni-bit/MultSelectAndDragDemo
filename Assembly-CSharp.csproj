@@ -85,14 +85,16 @@
     <Compile Include="Assets\Scripts\Camera\CameraMovements.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraRotation.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraScroll.cs" />
+    <Compile Include="Assets\Scripts\ClampColliderInputField.cs" />
     <Compile Include="Assets\Scripts\ClickedTarget.cs" />
     <Compile Include="Assets\Scripts\Cohort.cs" />
     <Compile Include="Assets\Scripts\CohortSwitches.cs" />
+    <Compile Include="Assets\Scripts\ColliderDistanceSetter.cs" />
     <Compile Include="Assets\Scripts\DragBoxHandler.cs" />
     <Compile Include="Assets\Scripts\Environment\SunLight.cs" />
+    <Compile Include="Assets\Scripts\GameTick.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IAttackable.cs" />
     <Compile Include="Assets\Scripts\Interfaces\IDamagable.cs" />
-    <Compile Include="Assets\Scripts\Interfaces\ITickable.cs" />
     <Compile Include="Assets\Scripts\Managers\BuildingManager.cs" />
     <Compile Include="Assets\Scripts\Managers\InputManager.cs" />
     <Compile Include="Assets\Scripts\Managers\ResourceManager.cs" />

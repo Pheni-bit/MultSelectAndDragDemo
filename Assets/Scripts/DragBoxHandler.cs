@@ -35,10 +35,6 @@ public class DragBoxHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
             selectionBox.gameObject.SetActive(true);
             canvas = UIManager.Instance.gameObject.GetComponent<Canvas>();
             startPos = eventData.position;
-            //Debug.Log(eventData.position + " eventData.position StartDrag");
-            //Debug.Log(Input.mousePosition + "input.mouse.pos StartDrag");
-            //Debug.Log(canvas.pixelRect.width);
-            //Debug.Log(canvas.pixelRect.height);
             selectionRect = new Rect();
         }
         else if (Input.GetMouseButton(1))

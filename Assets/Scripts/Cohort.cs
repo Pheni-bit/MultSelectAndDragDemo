@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class Cohort : MonoBehaviour
+public class Cohort : MonoBehaviour, ITickable
 {
     [SerializeField]
     public string aggression = "Guerrilla";
@@ -10,10 +11,60 @@ public class Cohort : MonoBehaviour
     public string stance;
     [SerializeField]
     public string density;
-    int gridWidth;
-    int gridHeight;
+    public bool inCombat, wasInCombat;
+    public int gridWidth;
+    public int gridHeight;
     [SerializeField]
     List<Vector3> placementVectors = new List<Vector3>();
+    public List<GameObject> enemyProxies = new List<GameObject>();
+    private void Awake()
+    {
+        GameTick.InGameTick += Tick;
+    }
+    public void Tick()
+    {
+        /*
+        if (!inCombat)
+        {
+            if (wasInCombat)
+            {
+                Init();
+                wasInCombat = false;
+            }
+        }
+        else
+        {
+            wasInCombat = true;
+        }
+        */
+    }
+    private void FixedUpdate()
+    {
+        if (enemyProxies.Count != 0)
+        {
+            for(int i = 0; i < enemyProxies.Count; i++)
+            {
+                if (enemyProxies[i] == null)
+                {
+                    enemyProxies.RemoveAt(i);
+                }
+            }
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                transform.GetChild(i).GetComponent<Bot>().enemysToAttack = enemyProxies;
+                inCombat = true;
+            }
+            //enemyProxies.Sort(SortEnemyDistance);
+        }
+        else if (inCombat)
+        {
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                transform.GetChild(i).GetComponent<Bot>().enemysToAttack.Clear();
+                inCombat = false;
+            }
+        }
+    }
     public void Init()
     {
         CreateGridWidthHeight(GetBotStance());
@@ -137,5 +188,17 @@ public class Cohort : MonoBehaviour
                 return 2;
         }
         // set cohort placement grid distance;
+    }
+
+    public void CohortHasBeenSelected()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).GetComponent<Bot>().OnSelect(new BaseEventData(EventSystem.current));
+        }
+    }
+    private void OnDestroy()
+    {
+        GameTick.InGameTick -= Tick;
     }
 }

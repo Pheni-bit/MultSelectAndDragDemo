@@ -90,7 +90,7 @@ public class BotWorker : Bot
             posAssignedToBuild = targetOrderedToBuild.GetComponent<Building>().ReturnAvailableBuildSpot(gameObject);
         if (posAssignedToBuild != Vector3.zero)
         {
-            SetNavDestination(posAssignedToBuild);
+            navMeshAgent.SetDestination(posAssignedToBuild);
             SetStoppingDistance(0);
             SetNavRotation(targetOrderedToBuild);
             if (CompletedOrder())

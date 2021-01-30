@@ -35,10 +35,10 @@ public class UIManager : MonoBehaviour, ITickable
     }
     private void Start()
     {
+        GameTick.InGameTick += Tick;
         //Debug.Log("scale factor = " + gameObject.GetComponent<Canvas>().scaleFactor);
         _instance = this;
         terrainManager = GameObject.Find("Terrain").GetComponent<TerrainManager>();
-        ResourceManager.tickables.Add(this.gameObject);
     }
 
     void Update()
@@ -166,7 +166,7 @@ public class UIManager : MonoBehaviour, ITickable
     {
         bottomSelected[index].SetActive(false);
     }
-    public void UpdateCohortAggression(string str)
+    public void UpdateCurrentCohortAggression(string str)
     {
         if (Selected && selectedCohort != null)
         {
@@ -175,7 +175,7 @@ public class UIManager : MonoBehaviour, ITickable
         }
         
     }
-    public void UpdateCohortStance(string str)
+    public void UpdateCurrentCohortStance(string str)
     {
         if (Selected && selectedCohort != null)
         {
@@ -264,5 +264,9 @@ public class UIManager : MonoBehaviour, ITickable
                 buildingBuiltPanel.transform.GetChild(0).GetComponent<Button>().interactable = buildingScript.HasTheRequiredResources();
             }
         }
+    }
+    private void OnDisable()
+    {
+        GameTick.InGameTick -= Tick;
     }
 }

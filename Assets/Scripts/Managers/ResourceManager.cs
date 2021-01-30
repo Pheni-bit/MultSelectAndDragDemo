@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ResourceManager : MonoBehaviour, ITickable
 {
-    public static List<GameObject> tickables = new List<GameObject>();
     string[] resoureNames =
         {
             "Gold",
@@ -27,8 +26,6 @@ public class ResourceManager : MonoBehaviour, ITickable
     public int[] current = new int[4];  //currentGold, currentFood, curremtWood, currentStone;
     int[] maxCapacity = new int[4];  // maxGoldCapacity, maxFoodCapacity, maxWoodCapacity, maxStoneCapacity;
     private readonly int numberOfResources = 4;
-    float resourceTick = 5.0f;
-    float tickTime = 5.0f;
     public static int[] addedMultipliers = new int[4];
     public static int[] addedResources = new int[4];
     public UIManager uiManager;
@@ -47,27 +44,17 @@ public class ResourceManager : MonoBehaviour, ITickable
     }
     void Awake()
     {
-        tickables.Add(this.gameObject);
+        GameTick.InGameTick += Tick;
         _resourceInstance = this;
         for (int i = 0; i < numberOfResources; i++)
         {
             maxCapacity[i] = baseCapacity[i];
             current[i] = starting[i];
         }
-        StartCoroutine(StartResourceTickRoutine());
         UpdateResourceUI();
     }
 
-    IEnumerator StartResourceTickRoutine()
-    {
-        yield return new WaitForSeconds(tickTime);
-        foreach(GameObject obj in tickables)
-        {
-            obj.GetComponent<ITickable>().Tick();
-        }
-        StartCoroutine(StartResourceTickRoutine());
-    }
-    void ITickable.Tick()
+    public void Tick()
     {
         int[] tempChange = new int[4];
         for (int i = 0; i < numberOfResources; i++)
